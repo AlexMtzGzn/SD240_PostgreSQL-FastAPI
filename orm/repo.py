@@ -148,3 +148,35 @@ def devuelve_compras(sesion:Session):
 def devuelve_compras_por_usuario_precio(sesion:Session, id_usr:int, p:float):
     print("select * from app.compras where id_usuario=id_usr and precio>=p")
     return sesion.query(modelos.Compra).filter(and_(modelos.Compra.id_usuario==id_usr, modelos.Compra.precio>=p)).all()
+
+
+def actualiza_compra(sesion: Session, id_compra: int, compra_esquema: esquemas.CompraBase):
+    print("Actualizando compra con id:", id_compra)
+    compra_bd = compra_por_id(sesion, id_compra)
+    if compra_bd:
+       
+        compra_bd.producto = compra_esquema.producto
+        compra_bd.precio = compra_esquema.precio
+        sesion.commit()
+        sesion.refresh(compra_bd)
+        return compra_bd
+    else:
+        return {"mensaje": "Compra no encontrada"}
+    
+
+def actualiza_foto(sesion: Session, id_foto: int, titulo: str, descripcion: str, ruta_imagen: Optional[str] = None):
+    print("Actualizando foto con id:", id_foto)
+
+    foto_bd = foto_por_id(sesion, id_foto)
+    if foto_bd:
+       
+        foto_bd.titulo = titulo
+        foto_bd.descripcion = descripcion
+        if ruta_imagen:
+            foto_bd.ruta_imagen = ruta_imagen  
+        sesion.commit()
+        sesion.refresh(foto_bd)
+        return foto_bd
+    else:
+        return {"mensaje": "Foto no encontrada"}
+

@@ -94,8 +94,30 @@ def guardar_usuario(usuario:esquemas.UsuarioBase,sesion:Session=Depends(generado
     #guardado en la base.
     return repo.guardar_usuario(sesion,usuario)
 
-#@app.put("/compras/{id}")
-#@app.put("/fotos/{id}")
+
+@app.put("/compras/{id}")
+def actualizar_compra(id: int, compra: esquemas.CompraBase, sesion: Session = Depends(generador_sesion)):
+    print("Actualizando compra con ID:", id)
+    return repo.actualiza_compra(sesion, id, compra)
+
+@app.put("/fotos/{id}")
+async def actualizar_foto(id: int, titulo: str = Form(None), descripcion: str = Form(...), foto: UploadFile = File(None), sesion: Session = Depends(generador_sesion)):
+    print("Actualizando foto con ID:", id)
+    if foto:
+        home_usuario = os.path.expanduser("~")
+        nombre_archivo = uuid.uuid4().hex 
+        extension = os.path.splitext(foto.filename)[1]
+        ruta_imagen = f'{home_usuario}/fotos-ejemplo/{nombre_archivo}{extension}'
+        print("Guardando imagen en ruta:", ruta_imagen)
+
+        with open(ruta_imagen, "wb") as imagen:
+            contenido = await foto.read() 
+            imagen.write(contenido)
+
+        return repo.actualiza_foto(sesion, id, titulo, descripcion, ruta_imagen)
+    else:
+        return repo.actualiza_foto(sesion, id, titulo, descripcion)
+
 @app.put("/usuario/{id}")
 def actualizar_usuario(id:int,info_usuario:esquemas.UsuarioBase,sesion:Session=Depends(generador_sesion)):
     return repo.actualiza_usuario(sesion,id,info_usuario)
