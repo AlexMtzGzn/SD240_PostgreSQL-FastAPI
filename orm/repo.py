@@ -12,7 +12,22 @@ def usuario_por_id(sesion:Session,id_usuario:int):
     return sesion.query(modelos.Usuario).filter(modelos.Usuario.id==id_usuario).first()
 
 def actualizar_usuario(sesion:Session,id_usuario:int , usr_esquema:esquemas.UsuarioBase):
-    print()
+    usr_bd = usuario_por_id(sesion,id_usuario)
+    if usr_bd is not None:
+        usr_bd.nombre = usr_esquema.nombre
+        usr_bd.edad = usr_esquema.edad
+        usr_bd.domicilio = usr_esquema.domicilio
+        usr_bd.email = usr_esquema.email
+        usr_bd.password = usr_esquema.password
+        
+        sesion.commit()
+        sesion.refresh(usr_bd)
+        print(usr_bd)
+        return usr_bd
+    else :
+        respuesta = {"mensaje","Usuario no encontrado"}
+        return respuesta
+
 
 #Select * from compras
 #definicion de compra y foto
