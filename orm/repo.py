@@ -163,20 +163,3 @@ def actualiza_compra(sesion: Session, id_compra: int, compra_esquema: esquemas.C
     else:
         return {"mensaje": "Compra no encontrada"}
     
-
-def actualiza_foto(sesion: Session, id_foto: int, titulo: str, descripcion: str, ruta_imagen: Optional[str] = None):
-    print("Actualizando foto con id:", id_foto)
-
-    foto_bd = foto_por_id(sesion, id_foto)
-    if foto_bd:
-       
-        foto_bd.titulo = titulo
-        foto_bd.descripcion = descripcion
-        if ruta_imagen:
-            foto_bd.ruta_imagen = ruta_imagen  
-        sesion.commit()
-        sesion.refresh(foto_bd)
-        return foto_bd
-    else:
-        return {"mensaje": "Foto no encontrada"}
-
